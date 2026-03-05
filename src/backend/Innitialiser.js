@@ -4,8 +4,8 @@ import * as fileSys from 'expo-file-system/legacy';
 //  the default dtata if the file is not initialised
 const DEFAULT_DATA = {
   settings: {
-    username: "User",  // can be set by user
-    age: 25,           // can be set by user
+    username: "User",  
+    age: 25,           
     difficulty: "Beginner",
     dailyStepGoal: 5000,
     theme: "Light"
@@ -16,14 +16,14 @@ const DEFAULT_DATA = {
     dailySteps: 0,
     level: 1,
     currentXp: 0,
-    lastUpdatedDay: new Date().toISOString().split('T')[0], // Store only the date part (YYYY-MM-DD)
-    lastUpdatedWeek: new Date().toISOString().split('T')[0], // Store only the date part (YYYY-MM-DD)
+    lastUpdatedDay: new Date().toISOString().split('T')[0], 
+    lastUpdatedWeek: new Date().toISOString().split('T')[0], 
   },
   pet: {
-    name: "",  // can be set by user
+    name: "",  
     stage: "Egg", 
     happiness: 100,
-    lastUpdated: new Date().toISOString().split('T')[0] // Store only the date part (YYYY-MM-DD)
+    lastUpdated: new Date().toISOString().split('T')[0] 
   },
   geoNotes: [],
   natureGallery: []
