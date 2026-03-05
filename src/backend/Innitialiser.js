@@ -5,7 +5,7 @@ import * as fileSys from 'expo-file-system/legacy';
 const DEFAULT_DATA = {
   settings: {
     username: "User",  // can be set by user
-    Age: 25,           // can be set by user
+    age: 25,           // can be set by user
     difficulty: "Beginner",
     dailyStepGoal: 5000,
     theme: "Light"
@@ -15,13 +15,15 @@ const DEFAULT_DATA = {
     weeklySteps: 0,
     dailySteps: 0,
     level: 1,
-    currentXp: 0
+    currentXp: 0,
+    lastUpdatedDay: new Date().toISOString().split('T')[0], // Store only the date part (YYYY-MM-DD)
+    lastUpdatedWeek: new Date().toISOString().split('T')[0], // Store only the date part (YYYY-MM-DD)
   },
   pet: {
     name: "",  // can be set by user
     stage: "Egg", 
     happiness: 100,
-    lastUpdate: new Date().toISOString()
+    lastUpdated: new Date().toISOString().split('T')[0] // Store only the date part (YYYY-MM-DD)
   },
   geoNotes: [],
   natureGallery: []
@@ -38,6 +40,18 @@ async function Innitialiser() {
       await fileSys.writeAsStringAsync(fileURI, JSON.stringify(DEFAULT_DATA));
       return DEFAULT_DATA; 
     }
+
+    // file exists, and if its corrupted 
+    const fileContent = await fileSys.readAsStringAsync(fileURI);
+    const data = JSON.parse(fileContent);
+    
+    if (!data || typeof data !== "object") {
+      console.log("Courrupted Data, resetting to default");
+      await fileSys.writeAsStringAsync(fileURI, JSON.stringify(DEFAULT_DATA));
+      return DEFAULT_DATA;
+    }
+
+    return data; 
   }
 
   catch (error) {
@@ -70,5 +84,16 @@ async function saveData(newData) {
   }
 }
 
+async function resetData() {
+  try {
+    const fileURI = fileSys.documentDirectory + 'appData.json';
+    await fileSys.writeAsStringAsync(fileURI, JSON.stringify(DEFAULT_DATA));
+    return DEFAULT_DATA;
+  } catch (error) {
+    console.error("Error resetting app data:", error);
+    return DEFAULT_DATA;
+  }
+}
 
-export {Innitialiser, saveData, getStoredData};
+
+export {Innitialiser, saveData, getStoredData, resetData};
