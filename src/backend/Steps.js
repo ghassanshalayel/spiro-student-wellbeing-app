@@ -9,28 +9,32 @@ async function startStepCounter(updateSteps) {
     return null;
   }
 
+  // had issues for counter 
+  // 20 steps walked -> app thought 400 steps 
   let previousSteps = 0;
   
-  // Subscribe to step count updates
   const subscription = Pedometer.watchStepCount(result => {
     let newSteps = result.steps;
+    let diff = newSteps - previousSteps; 
     
-    updateSteps(newSteps); // Update the steps in the app state
+    updateSteps(prevSteps => prevSteps + diff); 
   
     // Update the steps in the data file
     getStoredData().then(data => {
       if (data) {
-        data.stats.dailySteps += newSteps;
-        data.stats.lifetimeSteps += newSteps;
-        data.stats.weeklySteps += newSteps;
+        data.stats.dailySteps += diff;
+        data.stats.lifetimeSteps += diff;
+        data.stats.weeklySteps += diff;
         saveData(data);
       }
     });
+
+    previousSteps = newSteps; 
+
   });
   
-  return subscription; // Return subscription for cleanup
+  return subscription; 
 }
-
 
 
 export {startStepCounter};

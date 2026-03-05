@@ -5,34 +5,28 @@ import { getStoredData } from './backend/Innitialiser';
 import { startStepCounter } from './backend/Steps';
 
 export default function App() {
+  // const [steps, setSteps] = useState(0); // Initialize with stored daily steps or 0
 
-  const [steps, setSteps] = useState(0);
+  // useEffect(() => {
+  //   let subscription;
 
-  useEffect(() => {
-    let subscription;
+  //   async function test() {
+  //     subscription = await startStepCounter(setSteps);
 
-    async function initSteps() {
-      subscription = await startStepCounter((newCount) => {
-        setSteps(newCount); 
-      });
-    }
+  //     const data = await getStoredData();
+  //     console.log("Data Initailsed:", data.stats);
+  //   }
+  //   test(); 
 
-    // async function test() {
-    //   const data = await getStoredData();
-    //   console.log("Data Initailsed:", data.stats);
-    // }
-    // test(); 
-    initSteps(); 
-
-    // CLEANUP: Stop the sensor when Johnny leaves the screen
-    return () => {
-      if (subscription) subscription.remove();
-    }; 
-  }, []);
+  //   // preventing the mem leak, so that wrong data to be not inserted 
+  //   return () => {
+  //     if (subscription) subscription.remove(); 
+  //   }; 
+  // }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Steps: {steps}</Text>
+      <Text style={{ color: '#ffffff' }}>Empty App</Text>
     </View>
   );
 }
@@ -40,7 +34,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
   },
