@@ -38,10 +38,6 @@ async function Innitialiser() {
       await fileSys.writeAsStringAsync(fileURI, JSON.stringify(DEFAULT_DATA));
       return DEFAULT_DATA; 
     }
-
-    // IF EXIST S
-    const fileContent = await fileSys.readAsStringAsync(fileURI);
-    return JSON.parse(fileContent);
   }
 
   catch (error) {
@@ -50,8 +46,18 @@ async function Innitialiser() {
   }
 }
 
+async function getStoredData() {
+  try {
+    const fileURI = fileSys.documentDirectory + 'appData.json';
+    const fileContent = await fileSys.readAsStringAsync(fileURI);
+    return JSON.parse(fileContent);
+  } catch (error) {
+    console.error("Error getting stored data:", error);
+    return DEFAULT_DATA;
+  }
+}
 
-async function saveDate(newData) {
+async function saveData(newData) {
   try{
     const fileURI = fileSys.documentDirectory + 'appData.json';
     await fileSys.writeAsStringAsync(fileURI, JSON.stringify(newData));
@@ -65,4 +71,4 @@ async function saveDate(newData) {
 }
 
 
-export {Innitialiser, saveDate};
+export {Innitialiser, saveData, getStoredData};
