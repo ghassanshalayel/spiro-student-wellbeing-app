@@ -1,4 +1,4 @@
-import { getStoredData, saveData } from "./Innitialiser";
+import { getStoredData, saveData } from "./Initialiser";
 
 // NOTE - comment out the cONSOLE.LOGs once submitting the code 
 

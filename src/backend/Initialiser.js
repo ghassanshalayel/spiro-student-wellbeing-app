@@ -37,7 +37,7 @@ async function Innitialiser() {
 
     // if the file doesnt exists the initialise with default data 
     if (!fileInfo.exists) {
-      await fileSys.writeAsStringAsync(fileURI, JSON.stringify(DEFAULT_DATA));
+      await saveData(DEFAULT_DATA); 
       return DEFAULT_DATA; 
     }
 
@@ -47,7 +47,7 @@ async function Innitialiser() {
     
     if (!data || typeof data !== "object") {
       console.log("Courrupted Data, resetting to default");
-      await fileSys.writeAsStringAsync(fileURI, JSON.stringify(DEFAULT_DATA));
+      await saveData(DEFAULT_DATA);
       return DEFAULT_DATA;
     }
 
@@ -73,6 +73,11 @@ async function getStoredData() {
 
 async function saveData(newData) {
   try{
+
+    if (!newData || typeof newData !== "object") {
+      throw new Error("Invalid data format. Data must be an object."); 
+    }
+
     const fileURI = fileSys.documentDirectory + 'appData.json';
     await fileSys.writeAsStringAsync(fileURI, JSON.stringify(newData));
     return true; 
@@ -84,10 +89,11 @@ async function saveData(newData) {
   }
 }
 
+
+// if and only if the DEV wants to reset, like us
 async function resetData() {
   try {
-    const fileURI = fileSys.documentDirectory + 'appData.json';
-    await fileSys.writeAsStringAsync(fileURI, JSON.stringify(DEFAULT_DATA));
+    await saveData(DEFAULT_DATA);
     return DEFAULT_DATA;
   } catch (error) {
     console.error("Error resetting app data:", error);

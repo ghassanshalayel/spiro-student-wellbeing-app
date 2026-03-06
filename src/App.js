@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { getStoredData, resetData } from './backend/Innitialiser';
+import { getStoredData, resetData } from './backend/Initialiser';
 import { startStepCounter } from './backend/Steps';
 
 export default function App() {

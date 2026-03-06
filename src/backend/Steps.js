@@ -1,4 +1,4 @@
-import { getStoredData, saveData } from "./Innitialiser";
+import { getStoredData, saveData } from "./Initialiser";
 import { Pedometer } from 'expo-sensors';
 
 async function getStepData() {
