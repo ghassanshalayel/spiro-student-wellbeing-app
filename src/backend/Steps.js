@@ -19,63 +19,66 @@ async function getStepData() {
 
 /************ Function for Starting the Counter ************/
 
+let subscriptionActive = null;
+let trackerStarted = false;
+
 async function startStepCounter(updateSteps) {
-  const data = await getStoredData();
-
   const isAvailable = await Pedometer.isAvailableAsync();
-  
-  if (!isAvailable) {
-    console.log("Pedometer not available on this device");
-    return null;
-  }
 
-  // had issues for counter 
-  // 20 steps walked -> app thought 400 steps 
+  if (!isAvailable) return null;
+
+  // we dont want any previous trackers to be sent so remove them
+  stopStepCounter(); 
+
+  trackerStarted = true;
+  if (subscriptionActive) return subscriptionActive;
+  
   let previousSteps = 0;
   
-  const subscription = Pedometer.watchStepCount(async result => {
-    let newSteps = result.steps;
-    let diff = newSteps - previousSteps; 
+  subscriptionActive = Pedometer.watchStepCount(async result => {
 
-    if (diff <= 0) return; // no changes to do so go back 
-    
-    updateSteps(prevSteps => prevSteps + diff); 
+    // we dont wanna add steps if the tracker is not active
+    if (!trackerStarted) return; 
 
-    previousSteps = newSteps; 
-  
-    if (!data?.stats) {
-      console.log("Failed to update steps: No stats found in data.");
-      return;
-    }
+    console.log("Counter Successfully started");
 
-    data.stats.dailySteps += diff;
-    data.stats.weeklySteps += diff;
-    data.stats.lifetimeSteps += diff;
-    
-    const success = await saveData(data);
+    const newSteps = result.steps;
+    const diff = newSteps - previousSteps;
 
-    if (!success) {
-      console.log("Failed to update steps in data file.");
-      return;
+    if (diff < 0) return;
+
+    // UI update
+    updateSteps(prev => prev + diff);
+    previousSteps = newSteps;
+
+    // update the data
+    const data = await getStoredData();
+
+    if (data?.stats) {
+      data.stats.dailySteps += diff;
+      data.stats.weeklySteps += diff;
+      data.stats.lifetimeSteps += diff;
+
+      await saveData(data);
     }
 
     // console.log("===== DEBUG: Step Count Updated =====");
-    // console.log("New Steps from Pedometer:", newSteps);
-    // console.log("Previous Steps:", previousSteps);
-    // console.log("Difference (Steps Added):", diff);
-  
-    // console.log("Updated Steps State:", previousSteps);
+    // console.log("Steps added:", diff, "| Running total:", previousSteps);
     // console.log("=====================================");
 
   });
   
-  return subscription; 
+  return subscriptionActive; 
 }
 
-async function stopStepCounter(subscription) {
-  if (subscription) {
-    subscription.remove();
-    console.log("Step counter stopped successfully.");
+async function stopStepCounter() {
+  trackerStarted = false;
+
+  if (subscriptionActive) {
+      subscriptionActive.remove();
+      subscriptionActive = null;
+
+      console.log("Step counter stopped.");
   }
 }
 

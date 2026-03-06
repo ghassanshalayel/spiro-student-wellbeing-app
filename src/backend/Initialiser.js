@@ -56,7 +56,7 @@ async function Innitialiser() {
 
   catch (error) {
     console.error("Error initializing app data:", error);
-    return DEFAULT_DATA; // rollback to default if any data corruption
+    return DEFAULT_DATA; 
   }
 }
 
@@ -67,7 +67,7 @@ async function getStoredData() {
     return JSON.parse(fileContent);
   } catch (error) {
     console.error("Error getting stored data:", error);
-    return DEFAULT_DATA;
+    return null;
   }
 }
 
