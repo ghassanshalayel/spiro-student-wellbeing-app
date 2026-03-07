@@ -1,4 +1,5 @@
 import * as fileSys from 'expo-file-system/legacy';
+import { normalisePetData, applyPetDecay } from "./Pet";
 
 
 //  the default dtata if the file is not initialised
@@ -37,6 +38,8 @@ async function Innitialiser() {
 
     // if the file doesnt exists the initialise with default data 
     if (!fileInfo.exists) {
+      normalisePetData(DEFAULT_DATA);
+      applyPetDecay(DEFAULT_DATA);
       await saveData(DEFAULT_DATA); 
       return DEFAULT_DATA; 
     }
@@ -47,15 +50,28 @@ async function Innitialiser() {
     
     if (!data || typeof data !== "object") {
       console.log("Courrupted Data, resetting to default");
+      
+      normalisePetData(DEFAULT_DATA);
+      applyPetDecay(DEFAULT_DATA);
+
       await saveData(DEFAULT_DATA);
       return DEFAULT_DATA;
     }
+
+    normalisePetData(data);
+    applyPetDecay(data);
+    await saveData(data);
 
     return data; 
   }
 
   catch (error) {
     console.error("Error initializing app data:", error);
+
+    normalisePetData(DEFAULT_DATA);
+    applyPetDecay(DEFAULT_DATA);
+
+    await saveData(DEFAULT_DATA);
     return DEFAULT_DATA; 
   }
 }

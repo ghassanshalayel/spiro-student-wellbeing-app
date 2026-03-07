@@ -1,5 +1,6 @@
 import { getStoredData, saveData } from "./Initialiser";
 import { Pedometer } from 'expo-sensors';
+import { normalisePetData, applyStepsReward } from "./Pet";
 
 async function getStepData() {
   const data = await getStoredData();
@@ -55,9 +56,12 @@ async function startStepCounter(updateSteps) {
     const data = await getStoredData();
 
     if (data?.stats) {
+      normalisePetData(data);
       data.stats.dailySteps += diff;
       data.stats.weeklySteps += diff;
       data.stats.lifetimeSteps += diff;
+
+      applyStepsReward(data, diff);
 
       await saveData(data);
     }
