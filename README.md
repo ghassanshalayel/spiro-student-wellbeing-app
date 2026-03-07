@@ -59,7 +59,7 @@ Spiro/
 ├── package.json                # Project dependencies and scripts
 ├── index.js                    # Entry point for the app
 └── README.md                   # Project documentation
-
+```
 ## How we store the Local Data?
 
 we store the data in JSON format
