@@ -1,7 +1,7 @@
 // src/screens/HomeScreen.js
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
-import { applyPetDecay, getPet, setPetName } from "../Pet";
+import { applyPetDecay, getPet, setPetName } from "../backend/Pet";
 
 export default function HomeScreen() {
   const [pet, setPet] = useState(null);
