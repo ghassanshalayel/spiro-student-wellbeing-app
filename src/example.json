@@ -26,9 +26,11 @@
       "id": "note_1741197600",
       "title": "Riverside Reflection",
       "notes": "The water is very calm today. Great spot for a 5-minute breather.",
-      "latitude": 55.8642,
-      "longitude": -4.2518,
-      "timestamp": "2026-03-05T18:00:00Z"
+      "timestamp": "2026-03-05T18:00:00Z",
+      "location": {
+        "lat": 0.417,
+        "log": 2.5638
+      }
     }
   ],
   "natureGallery": [
