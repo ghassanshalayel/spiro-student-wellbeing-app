@@ -1,20 +1,19 @@
 // src/screens/HomeScreen.js
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
-import { applyPetDecay, getPet, setPetName } from "../backend/Pet";
+import { getPet, setPetName } from "../backend/Initialiser";
 
 export default function HomeScreen() {
   const [pet, setPet] = useState(null);
   const [nameDraft, setNameDraft] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      await applyPetDecay();
-      const p = await getPet();
-      setPet(p);
-      setNameDraft(p.name ?? "");
-    })();
-  }, []);
+useEffect(() => {
+  (async () => {
+    const pet = await getPet();
+    setPet(pet);
+    setNameDraft(pet.name ?? "");
+  })();
+}, []);
 
   if (!pet) return <View style={styles.page}><Text style={styles.text}>Loading…</Text></View>;
 
@@ -37,8 +36,8 @@ export default function HomeScreen() {
           accessibilityRole="button"
           style={styles.primaryBtn}
           onPress={async () => {
-            const updated = await setPetName(nameDraft);
-            setPet(updated);
+            const updatedPet = await setPetName(nameDraft);
+            setPet(updatedPet);
           }}
         >
           <Text style={styles.primaryBtnText}>Save name</Text>

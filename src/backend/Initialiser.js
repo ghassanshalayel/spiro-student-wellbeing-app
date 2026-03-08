@@ -117,5 +117,17 @@ async function resetData() {
   }
 }
 
+async function getPet() {
+  const data = await Innitialiser(); // ensures file exists + normalised + decay applied
+  return data.pet;
+}
 
-export {Innitialiser, saveData, getStoredData, resetData};
+async function setPetName(name) {
+  const data = await Innitialiser();
+  data.pet.name = String(name ?? "");
+  await saveData(data);
+  return data.pet;
+}
+
+// add to your export list:
+export { Innitialiser, saveData, getStoredData, resetData, getPet, setPetName };
