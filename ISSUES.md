@@ -1,9 +1,8 @@
 # TODO
 
-- Make Pet, Gallery, GeoLocation js files and its functions 
-- Make Screens for UI part 
-- try to optimise the functions for fast usage 
-- try adding app image 
+### HomeScreen.js [Not Implemented List]
+  - add customisable pet options
+  - make this screen the new landing page
 
 
 # ISSUES TO BE FIXED
