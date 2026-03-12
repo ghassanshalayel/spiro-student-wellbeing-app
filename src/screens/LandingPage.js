@@ -9,6 +9,10 @@ export default function LandingPage({ navigation }) {
     <View style={styles.container}>
       <Text>Welcome to Spiro</Text>
       <Button 
+        title="Pet"  
+        onPress={() => navigation.navigate('Pet')} 
+        />
+      <Button 
         title="Open Map" 
         onPress={() => navigation.navigate('Map')} 
       />
