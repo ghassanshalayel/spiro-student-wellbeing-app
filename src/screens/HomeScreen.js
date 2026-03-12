@@ -1,14 +1,62 @@
 // src/screens/HomeScreen.js
-
-
 //TODO:
 // add customisable pet options
 //make this the new landing page
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
+import React, { useCallback,  useState } from "react";
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { getPet, setPetName, getStoredData } from "../backend/Initialiser";
 import { startStepCounter, stopStepCounter } from "../backend/Steps";
+
+//LIGHT/DARK THEMES:
+
+const THEMES = {
+  Light: {
+    pageBg: "#E8EEF9",
+    cardBg: "#FFFFFF",
+    text: "#1E293B",
+    subText: "#475569",
+    border: "#CBD5E1",
+    barBg: "#E2E8F0",
+    barDark: "#111827",
+    barBlue: "#3567B7",
+    barYellow: "#F2C94C",
+    primaryBtn: "#3567B7",
+    primaryBtnBorder: "#2E5BA3",
+    primaryBtnText: "#FFFFFF",
+    secondaryBtn: "#FFFFFF",
+    secondaryBtnBorder: "#3567B7",
+    secondaryBtnText: "#3567B7",
+    iconLight: "#FFFFFF",
+    iconDark: "#111827",
+    badgeBg: "#F2C94C",
+    badgeBorder: "#D4A72C",
+    inputBg: "#F8FAFC",
+  },
+  Dark: {
+    pageBg: "#0F172A",
+    cardBg: "#1E293B",
+    text: "#F8FAFC",
+    subText: "#CBD5E1",
+    border: "#334155",
+    barBg: "#334155",
+    barDark: "#94A3B8",
+    barBlue: "#60A5FA",
+    barYellow: "#FACC15",
+    primaryBtn: "#60A5FA",
+    primaryBtnBorder: "#3B82F6",
+    primaryBtnText: "#0F172A",
+    secondaryBtn: "#1E293B",
+    secondaryBtnBorder: "#60A5FA",
+    secondaryBtnText: "#60A5FA",
+    iconLight: "#FFFFFF",
+    iconDark: "#0F172A",
+    badgeBg: "#FACC15",
+    badgeBorder: "#EAB308",
+    inputBg: "#0F172A",
+  },
+};
 
 export default function HomeScreen({ navigation }) {
   const [pet, setPet] = useState(null);
@@ -18,7 +66,7 @@ export default function HomeScreen({ navigation }) {
   const [dailySteps, setDailySteps] = useState(0);
   const [editingName, setEditingName] = useState(false);
 
-  const refreshData = async () => {
+  const refreshData = useCallback(async () => {
     const loadedPet = await getPet();
     const loadedData = await getStoredData();
 
@@ -26,24 +74,29 @@ export default function HomeScreen({ navigation }) {
     setAppData(loadedData);
     setDailySteps(loadedData?.stats?.dailySteps ?? 0);
     setNameDraft(loadedPet?.name ?? "");
-  };
-
-  useEffect(() => {
-    refreshData();
-
-    return () => {
-      stopStepCounter();
-    };
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshData();
+
+      return () => {
+        stopStepCounter();
+      };
+    }, [refreshData]) 
+  );
 
   if (!pet || !appData) {
     return (
-      <View style={styles.page}>
-        <Text style={styles.title}>Spiro</Text>
-        <Text style={styles.loadingText}>Loading…</Text>
+      <View style={[styles.page, { backgroundColor: THEMES.Light.pageBg }]}>
+        <Text style={[styles.title, { color: THEMES.Light.text }]}>Spiro</Text>
+        <Text style={[styles.loadingText, { color: THEMES.Light.text }]}>Loading…</Text>
       </View>
     );
   }
+
+  const themeName = appData?.settings?.theme === "Dark" ? "Dark" : "Light";
+  const theme = THEMES[themeName];
 
   const happinessPct = Math.max(0, Math.min(100, pet.happiness ?? 0));
   const dailyGoal = appData?.settings?.dailyStepGoal ?? 5000;
@@ -58,6 +111,8 @@ export default function HomeScreen({ navigation }) {
   const xpPct = Math.max(0, Math.min(100, currentXp));
   const rewardSummary = `${100 - currentXp} XP until next level`;
 
+  const activities = (appData?.geoNotes?.length ?? 0) + (appData?.natureGallery?.length ?? 0);
+  
   const handleWalkToggle = async () => {
     if (!walking) {
       setWalking(true);
@@ -84,71 +139,90 @@ export default function HomeScreen({ navigation }) {
     setEditingName(false);
   };
 
-  return (
-    <View style={styles.page}>
-      <Text style={styles.title}>Spiro</Text>
+ return (
+    <ScrollView
+      style={[styles.page, { backgroundColor: theme.pageBg }]}
+      contentContainerStyle={styles.pageContent}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={[styles.title, { color: theme.text }]}>Spiro</Text>
 
-      {/* Top stats card */}
-      <View style={styles.topCard}>
+      <View
+        style={[
+          styles.topCard,
+          { backgroundColor: theme.cardBg, borderColor: theme.border },
+        ]}
+      >
         <View style={styles.topRow}>
-          <Text style={styles.infoLabel}>Level {level}</Text>
-          <Text style={styles.infoLabel}>Stage: {pet.stage}</Text>
+          <Text style={[styles.infoLabel, { color: theme.text }]}>Level {level}</Text>
+          <Text style={[styles.infoLabel, { color: theme.text }]}>
+            {activities} Activities
+          </Text>
         </View>
 
         <View style={styles.progressSection}>
           <View style={styles.progressRow}>
-            <Text style={styles.progressLabel}>XP</Text>
-            <Text style={styles.progressValue}>
+            <Text style={[styles.progressLabel, { color: theme.text }]}>XP</Text>
+            <Text style={[styles.progressValue, { color: theme.subText }]}>
               {currentXp} / 100 ({xpPct}%)
             </Text>
           </View>
-          <View style={styles.barOuter}>
-            <View style={[styles.barFillDark, { width: `${xpPct}%` }]} />
+          <View style={[styles.barOuter, { backgroundColor: theme.barBg, borderColor: theme.border }]}>
+            <View style={[styles.barFill, { width: `${xpPct}%`, backgroundColor: theme.barDark }]} />
           </View>
         </View>
 
         <View style={styles.progressSection}>
           <View style={styles.progressRow}>
-            <Text style={styles.progressLabel}>Daily Goal</Text>
-            <Text style={styles.progressValue}>
+            <Text style={[styles.progressLabel, { color: theme.text }]}>Daily Goal</Text>
+            <Text style={[styles.progressValue, { color: theme.subText }]}>
               {dailySteps} / {dailyGoal} ({goalPct}%)
             </Text>
           </View>
-          <View style={styles.barOuter}>
-            <View style={[styles.barFillBlue, { width: `${goalPct}%` }]} />
+          <View style={[styles.barOuter, { backgroundColor: theme.barBg, borderColor: theme.border }]}>
+            <View style={[styles.barFill, { width: `${goalPct}%`, backgroundColor: theme.barBlue }]} />
           </View>
         </View>
 
         <View style={styles.progressSection}>
           <View style={styles.progressRow}>
-            <Text style={styles.progressLabel}>Happiness</Text>
-            <Text style={styles.progressValue}>{happinessPct}%</Text>
+            <Text style={[styles.progressLabel, { color: theme.text }]}>Happiness</Text>
+            <Text style={[styles.progressValue, { color: theme.subText }]}>
+              {happinessPct}%
+            </Text>
           </View>
-          <View style={styles.barOuter}>
-            <View style={[styles.barFillYellow, { width: `${happinessPct}%` }]} />
+          <View style={[styles.barOuter, { backgroundColor: theme.barBg, borderColor: theme.border }]}>
+            <View style={[styles.barFill, { width: `${happinessPct}%`, backgroundColor: theme.barYellow }]} />
           </View>
         </View>
       </View>
 
-      {/* Main pet area */}
       <View style={styles.petArea}>
-        <View style={styles.levelBadge}>
-          <Text style={styles.levelBadgeText}>{level}</Text>
+        <View
+          style={[
+            styles.levelBadge,
+            { backgroundColor: theme.badgeBg, borderColor: theme.badgeBorder },
+          ]}
+        >
+          <Text style={[styles.levelBadgeText, { color: theme.iconDark }]}>{level}</Text>
         </View>
 
         <Text style={styles.petEmoji}>🐬</Text>
 
         {!editingName ? (
           <View style={styles.nameRow}>
-            <Text style={styles.petName}>
+            <Text style={[styles.petName, { color: theme.text }]}>
               {pet.name?.trim() ? pet.name : "Unnamed Pet"}
             </Text>
             <Pressable
-              style={styles.editNameBtn}
+              style={[
+                styles.editNameBtn,
+                { backgroundColor: theme.cardBg, borderColor: theme.border },
+              ]}
               onPress={() => setEditingName(true)}
               accessibilityRole="button"
             >
-              <Ionicons name="pencil-outline" size={18} color="#1E293B" />
+              <Ionicons name="pencil-outline" size={18} color={theme.text} />
             </Pressable>
           </View>
         ) : (
@@ -156,66 +230,109 @@ export default function HomeScreen({ navigation }) {
             <TextInput
               value={nameDraft}
               onChangeText={setNameDraft}
-              style={styles.nameInput}
+              style={[
+                styles.nameInput,
+                {
+                  borderColor: theme.border,
+                  backgroundColor: theme.inputBg,
+                  color: theme.text,
+                },
+              ]}
               placeholder="Enter pet name"
-              placeholderTextColor="#6B7280"
+              placeholderTextColor={theme.subText}
+              autoCorrect={false}
+              autoCapitalize="words"
+              returnKeyType="done"
+              onSubmitEditing={handleSaveName}
             />
-            <Pressable style={styles.smallSaveBtn} onPress={handleSaveName}>
-              <Text style={styles.smallSaveBtnText}>Save</Text>
+            <Pressable
+              style={[
+                styles.smallSaveBtn,
+                { backgroundColor: theme.primaryBtn },
+              ]}
+              onPress={handleSaveName}
+            >
+              <Text style={[styles.smallSaveBtnText, { color: theme.primaryBtnText }]}>
+                Save
+              </Text>
             </Pressable>
           </View>
         )}
 
-        <Text style={styles.petSubtitle}>
+        <Text style={[styles.petSubtitle, { color: theme.subText }]}>
           {walking ? "Currently walking" : rewardSummary}
         </Text>
       </View>
 
-      {/* Main action */}
       <Pressable
         accessibilityRole="button"
-        style={[styles.walkBtn, walking ? styles.stopBtn : styles.startBtn]}
+        style={[
+          styles.walkBtn,
+          {
+            backgroundColor: walking ? theme.secondaryBtn : theme.primaryBtn,
+            borderColor: walking ? theme.secondaryBtnBorder : theme.primaryBtnBorder,
+          },
+        ]}
         onPress={handleWalkToggle}
       >
-        <Text style={[styles.walkBtnText, walking && styles.stopBtnText]}>
+        <Text
+          style={[
+            styles.walkBtnText,
+            { color: walking ? theme.secondaryBtnText : theme.primaryBtnText },
+          ]}
+        >
           {walking ? "Stop Walk" : "Start Walk"}
         </Text>
       </Pressable>
 
-      {/* Bottom nav */}
       <View style={styles.navRow}>
-        <Pressable style={styles.navBtnBlue} onPress={() => navigation.navigate("Map")}>
-          <Ionicons name="map-outline" size={22} color="#FFFFFF" />
-          <Text style={styles.navBtnTextLight}>Map</Text>
+        <Pressable
+          style={[
+            styles.navBtn,
+            { backgroundColor: theme.primaryBtn, borderColor: theme.primaryBtnBorder },
+          ]}
+          onPress={() => navigation.navigate("Map")}
+        >
+          <Ionicons name="map-outline" size={22} color={theme.iconLight} />
+          <Text style={[styles.navBtnText, { color: theme.iconLight }]}>Map</Text>
         </Pressable>
 
         <Pressable
-          style={styles.navBtnYellow}
+          style={[
+            styles.navBtn,
+            { backgroundColor: theme.badgeBg, borderColor: theme.badgeBorder },
+          ]}
           onPress={() => navigation.navigate("Gallery")}
         >
-          <Ionicons name="images-outline" size={22} color="#111827" />
-          <Text style={styles.navBtnTextDark}>Gallery</Text>
+          <Ionicons name="images-outline" size={22} color={theme.iconDark} />
+          <Text style={[styles.navBtnText, { color: theme.iconDark }]}>Gallery</Text>
         </Pressable>
 
         <Pressable
-          style={styles.navBtnBlue}
+          style={[
+            styles.navBtn,
+            { backgroundColor: theme.primaryBtn, borderColor: theme.primaryBtnBorder },
+          ]}
           onPress={() => navigation.navigate("Settings")}
         >
-          <Ionicons name="settings-outline" size={22} color="#FFFFFF" />
-          <Text style={styles.navBtnTextLight}>Settings</Text>
+          <Ionicons name="settings-outline" size={22} color={theme.iconLight} />
+          <Text style={[styles.navBtnText, { color: theme.iconLight }]}>Settings</Text>
         </Pressable>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: "#E8EEF9",
+  },
+
+  pageContent: {
     paddingTop: 48,
     paddingHorizontal: 18,
     paddingBottom: 18,
+    flexGrow: 1,
   },
 
   title: {
@@ -223,22 +340,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 12,
-    color: "#1E293B",
   },
 
   loadingText: {
     textAlign: "center",
-    color: "#1E293B",
     fontSize: 18,
     marginTop: 40,
   },
 
   topCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 14,
     borderWidth: 2,
-    borderColor: "#CBD5E1",
     marginBottom: 14,
   },
 
@@ -252,7 +365,6 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#1E293B",
   },
 
   progressSection: {
@@ -269,37 +381,22 @@ const styles = StyleSheet.create({
   progressLabel: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1E293B",
   },
 
   progressValue: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#334155",
   },
 
   barOuter: {
     height: 12,
     borderRadius: 999,
     overflow: "hidden",
-    backgroundColor: "#E2E8F0",
     borderWidth: 1,
-    borderColor: "#94A3B8",
   },
 
-  barFillDark: {
+  barFill: {
     height: "100%",
-    backgroundColor: "#111827",
-  },
-
-  barFillBlue: {
-    height: "100%",
-    backgroundColor: "#3567B7",
-  },
-
-  barFillYellow: {
-    height: "100%",
-    backgroundColor: "#F2C94C",
   },
 
   petArea: {
@@ -307,6 +404,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
+    minHeight: 280,
   },
 
   levelBadge: {
@@ -316,17 +414,14 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: "#F2C94C",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: "#D4A72C",
   },
 
   levelBadgeText: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#111827",
   },
 
   petEmoji: {
@@ -344,16 +439,13 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#1E293B",
   },
 
   editNameBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#CBD5E1",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -369,33 +461,27 @@ const styles = StyleSheet.create({
   nameInput: {
     flex: 1,
     borderWidth: 2,
-    borderColor: "#CBD5E1",
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    color: "#111827",
-    backgroundColor: "#F8FAFC",
   },
 
   smallSaveBtn: {
     minHeight: 44,
     paddingHorizontal: 16,
     borderRadius: 12,
-    backgroundColor: "#3567B7",
     alignItems: "center",
     justifyContent: "center",
   },
 
   smallSaveBtnText: {
-    color: "#FFFFFF",
     fontSize: 15,
     fontWeight: "700",
   },
 
   petSubtitle: {
     fontSize: 14,
-    color: "#475569",
     fontWeight: "600",
     textAlign: "center",
   },
@@ -409,24 +495,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
 
-  startBtn: {
-    backgroundColor: "#3567B7",
-    borderColor: "#2E5BA3",
-  },
-
-  stopBtn: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#3567B7",
-  },
-
   walkBtnText: {
     fontSize: 17,
     fontWeight: "800",
-    color: "#FFFFFF",
-  },
-
-  stopBtnText: {
-    color: "#3567B7",
   },
 
   navRow: {
@@ -435,40 +506,18 @@ const styles = StyleSheet.create({
     gap: 12,
   },
 
-  navBtnBlue: {
+  navBtn: {
     flex: 1,
-    backgroundColor: "#3567B7",
     borderRadius: 16,
     paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
     minHeight: 72,
     borderWidth: 2,
-    borderColor: "#2E5BA3",
     gap: 4,
   },
 
-  navBtnYellow: {
-    flex: 1,
-    backgroundColor: "#F2C94C",
-    borderRadius: 16,
-    paddingVertical: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 72,
-    borderWidth: 2,
-    borderColor: "#D4A72C",
-    gap: 4,
-  },
-
-  navBtnTextLight: {
-    color: "#FFFFFF",
-    fontWeight: "800",
-    fontSize: 15,
-  },
-
-  navBtnTextDark: {
-    color: "#111827",
+  navBtnText: {
     fontWeight: "800",
     fontSize: 15,
   },

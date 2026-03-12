@@ -1,192 +1,198 @@
-import { getStoredData, saveData } from "./Initialiser";
+import { getStoredData, saveData, Innitialiser } from "./Initialiser";
 
-// NOTE - comment out the cONSOLE.LOGs once submitting the code 
+const DEFAULT_SETTINGS = {
+  username: "User",
+  age: 0,
+  difficulty: "Beginner",
+  dailyStepGoal: 5000,
+  theme: "Light",
+};
 
-/*********** The Reading Functions *************/
+const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced", "GOD MODE"];
+const THEMES = ["Light", "Dark"];
 
-async function getAppSettings() {
+async function loadData() {
   const data = await getStoredData();
+  if (data && typeof data === "object") return data;
+  return await Innitialiser();
+}
 
-  if (!data?.settings){
-    console.log("Failed to get app settings: No settings found in data.");
-    return {};
-  }
-
-  // returns all the values of settings rathere than having to call each one seperately
+function normaliseSettings(settings = {}) {
   return {
-    username: data.settings.username || "User",
-    age: data.settings.age || 0,
-    difficulty: data.settings.difficulty || "Beginner",
-    dailyStepGoal: data.settings.dailyStepGoal || 5000,
-    theme: data.settings.theme || "Light"
+    username:
+      typeof settings.username === "string" && settings.username.trim().length > 0
+        ? settings.username.trim()
+        : DEFAULT_SETTINGS.username,
+
+    age:
+      typeof settings.age === "number" && !Number.isNaN(settings.age)
+        ? settings.age
+        : DEFAULT_SETTINGS.age,
+
+    difficulty: DIFFICULTIES.includes(settings.difficulty)
+      ? settings.difficulty
+      : DEFAULT_SETTINGS.difficulty,
+
+    dailyStepGoal:
+      typeof settings.dailyStepGoal === "number" &&
+      Number.isInteger(settings.dailyStepGoal) &&
+      settings.dailyStepGoal >= 1000 &&
+      settings.dailyStepGoal <= 100000
+        ? settings.dailyStepGoal
+        : DEFAULT_SETTINGS.dailyStepGoal,
+
+    theme: THEMES.includes(settings.theme)
+      ? settings.theme
+      : DEFAULT_SETTINGS.theme,
   };
 }
 
+/*********** Reading *************/
 
+async function getAppSettings() {
+  const data = await loadData();
 
-/*********** The Updating Functions  *************/
-// (new Value to update, Updating on UI) <- param goes by
+  if (!data.settings) {
+    data.settings = { ...DEFAULT_SETTINGS };
+    await saveData(data);
+    return data.settings;
+  }
+
+  data.settings = normaliseSettings(data.settings);
+  await saveData(data);
+  return data.settings;
+}
+
+/*********** Updating *************/
 
 async function updateUsername(newUsername, functionToUpdateUsername) {
-  
-  if (typeof newUsername !== "string"){
+  if (typeof newUsername !== "string") {
     console.log("Username must be a string.");
     return false;
-  } 
+  }
 
-  newUsername = newUsername.trim();
+  const parsedUsername = newUsername.trim();
 
-  if (newUsername.length === 0 || newUsername.length > 20) {
-    console.log("Username cannot be empty. Also canot be more than 20 chars");
+  if (parsedUsername.length === 0 || parsedUsername.length > 20) {
+    console.log("Username cannot be empty or more than 20 characters.");
     return false;
   }
 
+  const data = await loadData();
+  data.settings = normaliseSettings(data.settings);
 
-  const data = await getStoredData();
-  if (!data?.settings){
-    console.log("Failed to update username: No settings found in data.");
-    return false;
-  }
-
-  data.settings.username = newUsername;
+  data.settings.username = parsedUsername;
   const success = await saveData(data);
 
-  if (!success){
+  if (!success) {
     console.log("Failed to update username.");
     return false;
   }
 
-  functionToUpdateUsername(newUsername);
-  console.log("Username updated successfully to:", newUsername);
-
+  if (functionToUpdateUsername) functionToUpdateUsername(parsedUsername);
   return true;
 }
 
-
 async function updateAge(newAge, functionToUpdateAge) {
+  const parsedAge = Number(newAge);
 
-  if (Number.isNaN(newAge)) {
+  if (Number.isNaN(parsedAge)) {
     console.log("Age must be a number.");
     return false;
   }
 
-  if (newAge < 0 || newAge > 100) {
-    console.log("Fr ddude, your age is less than 0 or more than 100, nah enter a valid age");
+  if (parsedAge < 0 || parsedAge > 100) {
+    console.log("Age must be between 0 and 100.");
     return false;
   }
 
-  const data = await getStoredData();
-  
-  if (!data?.settings){
-    console.log("Failed to update age: No settings found in data.");
-    return false;
-  }
+  const data = await loadData();
+  data.settings = normaliseSettings(data.settings);
 
-  data.settings.age = Number(newAge); 
+  data.settings.age = parsedAge;
   const success = await saveData(data);
 
-  if (!success){
+  if (!success) {
     console.log("Failed to update age.");
     return false;
   }
 
-  functionToUpdateAge(newAge);
-  console.log("Age updated successfully to:", newAge);
+  if (functionToUpdateAge) functionToUpdateAge(parsedAge);
   return true;
-
 }
 
-
 async function updateDifficulty(newDifficulty, functionToUpdateDifficulty) {
-  const difficultyAvailability = ["Beginner", "Intermediate", "Advanced", "GOD MODE"];
-
-  if (difficultyAvailability.indexOf(newDifficulty) === -1){
+  if (!DIFFICULTIES.includes(newDifficulty)) {
     console.log("Invalid difficulty level.");
     return false;
   }
 
-  const data = await getStoredData();
-
-  if (!data?.settings){
-    console.log("Failed to update difficulty: No settings found in data.");
-    return false;
-  }
+  const data = await loadData();
+  data.settings = normaliseSettings(data.settings);
 
   data.settings.difficulty = newDifficulty;
   const success = await saveData(data);
 
-  if (!success){
+  if (!success) {
     console.log("Failed to update difficulty.");
     return false;
   }
 
-  functionToUpdateDifficulty(newDifficulty);
-  console.log("Difficulty updated successfully to:", newDifficulty);
+  if (functionToUpdateDifficulty) functionToUpdateDifficulty(newDifficulty);
   return true;
 }
 
 async function updateDailyStepGoal(newGoal, functionToUpdateDailyStepGoal) {
+  const parsedGoal = Number(newGoal);
 
-  if (Number.isNaN(newGoal) || newGoal < 1000 || newGoal > 100000) {
-    console.log("If ur going more than 100000 ur insane dude, if lower than 1000, GET UP AND WALK 5000 STEPS");
+  if (Number.isNaN(parsedGoal) || parsedGoal < 1000 || parsedGoal > 100000) {
+    console.log("Daily step goal must be between 1000 and 100000.");
     return false;
   }
 
-  const data = await getStoredData();
+  const data = await loadData();
+  data.settings = normaliseSettings(data.settings);
 
-  if (!data?.settings){
-    console.log("Failed to update daily step goal: No settings found in data.");
-    return false;
-  }
-
-  data.settings.dailyStepGoal = newGoal;
+  data.settings.dailyStepGoal = parsedGoal;
   const success = await saveData(data);
 
-  if (!success){
+  if (!success) {
     console.log("Failed to update daily step goal.");
     return false;
   }
 
-  functionToUpdateDailyStepGoal(newGoal);
-  console.log("Daily step goal updated successfully to:", newGoal);
+  if (functionToUpdateDailyStepGoal) functionToUpdateDailyStepGoal(parsedGoal);
   return true;
-
 }
 
 async function updateTheme(newTheme, functionToUpdateTheme) {
-  const themeAvailability = ["Light", "Dark"];
-
-  if (themeAvailability.indexOf(newTheme) === -1){
+  if (!THEMES.includes(newTheme)) {
     console.log("Invalid theme.");
     return false;
   }
 
-  const data = await getStoredData();
-
-  if (!data?.settings){
-    console.log("Failed to update theme: No settings found in data.");
-    return false;
-  }
+  const data = await loadData();
+  data.settings = normaliseSettings(data.settings);
 
   data.settings.theme = newTheme;
   const success = await saveData(data);
 
-  if (!success){
+  if (!success) {
     console.log("Failed to update theme.");
     return false;
   }
 
-  functionToUpdateTheme(newTheme);
-  console.log("Theme updated successfully to:", newTheme);
+  if (functionToUpdateTheme) functionToUpdateTheme(newTheme);
   return true;
 }
 
-
-export { 
-  getAppSettings, 
-  updateUsername, 
-  updateAge, 
-  updateDifficulty, 
-  updateDailyStepGoal, 
-  updateTheme 
+export {
+  getAppSettings,
+  updateUsername,
+  updateAge,
+  updateDifficulty,
+  updateDailyStepGoal,
+  updateTheme,
+  DIFFICULTIES,
+  THEMES,
 };
