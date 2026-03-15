@@ -17,6 +17,7 @@ async function getWeatherFromCurrentLocation() {
   const { latitude, longitude } = currentLocation;
 
   try {
+    
     const apiURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,wind_speed_120m&temperature_unit=${tmpUnit.toLowerCase()}`;
     const response = await fetch(apiURL);
     const data = await response.json();

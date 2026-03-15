@@ -175,16 +175,26 @@ export default function HomeScreen({ navigation }) {
           
           {/* Weather Display */}
           {weather && (
-            <View style={{ alignItems: 'flex-end' }}>
-              <Text style={[styles.infoLabel, { color: theme.text }]}>
-                🌡️ {weather.temp}{weather.unit}
-              </Text>
-              <Text style={[styles.infoLabel, { color: theme.text }]}>
-                💨 {weather.wind} km/h
-              </Text>
+            <View style={styles.weatherContainer}>
+              {/* Temperature Row */}
+              <View style={styles.weatherRow}>
+                <Text style={styles.weatherEmoji}>🌡️</Text>
+                <Text style={[styles.infoLabel, { color: theme.text }]}>
+                  {weather.temp}{weather.unit}
+                </Text>
+              </View>
+
+              {/* Wind Speed Row */}
+              <View style={styles.weatherRow}>
+                <Text style={styles.weatherEmoji}>💨</Text>
+                <Text style={[styles.infoLabel, { color: theme.text }]}>
+                  {weather.wind} km/h
+                </Text>
+              </View>
             </View>
           )}
-        </View>
+        </View> 
+          
 
         <View style={styles.progressSection}>
           <View style={styles.progressRow}>
@@ -546,5 +556,22 @@ const styles = StyleSheet.create({
   navBtnText: {
     fontWeight: "800",
     fontSize: 15,
+  },
+
+  weatherContainer: {
+    alignItems: 'flex-start', 
+    minWidth: 100,            
+    justifyContent: 'center',
+  },
+  weatherRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  weatherEmoji: {
+    width: 25, 
+    fontSize: 16,
+    textAlign: 'center',
+    marginRight: 8,
   },
 });
