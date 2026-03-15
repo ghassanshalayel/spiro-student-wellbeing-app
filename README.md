@@ -24,7 +24,7 @@ and not feel a crushing guilt of being "unproductive". He needs motivation, some
 a walk or outdoor activity into a meaningful mission.
 
 ***App Benefit***: Introducing Spiro. Spiro will serve as the emotional bridge and motivation that Johnny's brain cannot ignore.
-Spiro will keep users like Johnny motivated by serving as a pet whos mood and level will be determined by how active the user us.
+Spiro will keep users like Johnny motivated by serving as a pet whos mood and level will be determined by how active the user is.
 When Spiro gets sad or lazy or lonely, the app will push a notification to Johnny telling him to take a walk. This walk will be mindful also. The resulting walk isn't just about hitting a step count, either. Spiro guides Johnny through mindful "Take Notice" moments, forcing him to disengage from his work and centre himself in his surroundings. Ultimately, the app tricks Johnny into taking the mental reset he desperately needs, using his own empathy as the primary motivator to de-stress and recharge
 
 Gamified Stress Reduction (Be Active): By linking Spiro’s growth and happiness to a pedometer, Spiro turns a mundane walk into a level-up opportunity. For a CS student, this mimics the satisfying progression of a game or a successful code deployment which will provide a hit of dopamine also.

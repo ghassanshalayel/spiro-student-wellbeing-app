@@ -66,11 +66,22 @@ export default function HomeScreen({ navigation }) {
   const [walking, setWalking] = useState(false);
   const [dailySteps, setDailySteps] = useState(0);
   const [editingName, setEditingName] = useState(false);
+  const [weather, setWeather] = useState(null);
 
   const refreshData = useCallback(async () => {
     const loadedPet = await getPet();
     const loadedData = await getStoredData();
     
+    //Weather fetching code 
+    const weatherRes = await getWeatherData();
+    if (weatherRes && weatherRes.hourly) {
+      const currentHour = new Date().getHours();
+      setWeather({
+        temp: weatherRes.hourly.temperature_2m[currentHour],
+        unit: weatherRes.hourly_units.temperature_2m,
+        wind: weatherRes.hourly.wind_speed_120m[currentHour]
+      });
+    }
     setPet(loadedPet);
     setAppData(loadedData);
     setDailySteps(loadedData?.stats?.dailySteps ?? 0);
@@ -155,10 +166,24 @@ export default function HomeScreen({ navigation }) {
         ]}
       >
         <View style={styles.topRow}>
-          <Text style={[styles.infoLabel, { color: theme.text }]}>Level {level}</Text>
-          <Text style={[styles.infoLabel, { color: theme.text }]}>
-            {activities} Activities
-          </Text>
+          <View>
+            <Text style={[styles.infoLabel, { color: theme.text }]}>Level {level}</Text>
+            <Text style={[styles.infoLabel, { color: theme.text, marginTop: 4, fontSize: 13 }]}>
+              {activities} Activities
+            </Text>
+          </View>
+          
+          {/* Weather Display */}
+          {weather && (
+            <View style={{ alignItems: 'flex-end' }}>
+              <Text style={[styles.infoLabel, { color: theme.text }]}>
+                🌡️ {weather.temp}{weather.unit}
+              </Text>
+              <Text style={[styles.infoLabel, { color: theme.text }]}>
+                💨 {weather.wind} km/h
+              </Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.progressSection}>
