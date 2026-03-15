@@ -85,14 +85,13 @@ async function getStoredData() {
     if (!fileContent) {
       console.log("Reinitialising data: No content found in appData.json.");
       const initialData = await Innitialiser();
-      await saveData(initialData);
       return initialData;
     }
 
     return JSON.parse(fileContent);
   } catch (error) {
     console.error("Error getting stored data:", error);
-    return null;
+    return await Innitialiser(); // we want to reinitialise if any critical error takes place
   }
 }
 

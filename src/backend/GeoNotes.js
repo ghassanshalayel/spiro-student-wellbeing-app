@@ -65,7 +65,6 @@ async function getUsersLocation() {
 
   if (coords) {
     const { latitude, longitude } = coords;
-    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
     return { latitude, longitude };
   }
 }

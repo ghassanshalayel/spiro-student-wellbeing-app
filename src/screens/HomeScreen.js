@@ -59,7 +59,17 @@ const THEMES = {
   },
 };
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation }) {  
+
+  
+  /* 
+  DEV ONLY: if you want to re cjhck if everything is working then uncommenbt the line below this comment,
+  each time a small edit to this file will reset the data to default value 
+  only for testing, be careful with this one, it resets all data to default, including pet and stats
+  */ 
+  //resetData(); 
+  
+
   const [pet, setPet] = useState(null);
   const [appData, setAppData] = useState(null);
   const [nameDraft, setNameDraft] = useState("");
@@ -72,7 +82,12 @@ export default function HomeScreen({ navigation }) {
     const loadedPet = await getPet();
     const loadedData = await getStoredData();
     
-    //Weather fetching code 
+    setPet(loadedPet);
+    setAppData(loadedData);
+    setDailySteps(loadedData?.stats?.dailySteps ?? 0);
+    setNameDraft(loadedPet?.name ?? "");
+
+    // get the weather later after settingth the priority data
     const weatherRes = await getWeatherData();
     if (weatherRes && weatherRes.hourly) {
       const currentHour = new Date().getHours();
@@ -84,10 +99,6 @@ export default function HomeScreen({ navigation }) {
         windUnit: weatherRes.hourly_units.wind_speed_120m
       });
     }
-    setPet(loadedPet);
-    setAppData(loadedData);
-    setDailySteps(loadedData?.stats?.dailySteps ?? 0);
-    setNameDraft(loadedPet?.name ?? "");
   }, []);
 
   useFocusEffect(
@@ -98,7 +109,8 @@ export default function HomeScreen({ navigation }) {
         stopStepCounter();
       };
     }, [refreshData]) 
-  );
+  ); 
+
 
   if (!pet || !appData) {
     return (
