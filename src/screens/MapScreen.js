@@ -1,34 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 export default function MapScreen() {
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+
+
+      // It updates every time you move more than 5 meters
+      await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          distanceInterval: 5, // Update every 5 meters
+        },
+        (location) => {
+          const { latitude, longitude } = location.coords;
+          
+          // Smoothly move the camera to follow the user
+          mapRef.current?.animateToRegion({
+            latitude,
+            longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }, 1000); 
+        }
+      );
+    })();
+  }, []);
+
   return (
     <View style={styles.container}>
       <MapView 
+        ref={mapRef}
         style={styles.map}
-        initialRegion={{
-          latitude: 55.8623,
-          longitude: -4.2423,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        }}
+        //Makes a dot and follows user
+        showsUserLocation={true} 
+        followsUserLocation={true} 
       >
-        <Marker
-          coordinate={{ latitude: 55.8623, longitude: -4.2423 }}
-          title="Strathclyde"
-        />
       </MapView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    width: '100%',
-    height: '100%',
-  },
+  container: { flex: 1 },
+  map: { width: '100%', height: '100%' },
 });

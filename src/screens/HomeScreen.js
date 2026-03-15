@@ -6,8 +6,9 @@ import React, { useCallback,  useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { getPet, setPetName, getStoredData } from "../backend/Initialiser";
+import { getPet, setPetName, getStoredData, resetData } from "../backend/Initialiser";
 import { startStepCounter, stopStepCounter } from "../backend/Steps";
+import { getWeatherData } from "../backend/Weather";
 
 //LIGHT/DARK THEMES:
 
@@ -58,22 +59,46 @@ const THEMES = {
   },
 };
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation }) {  
+
+  
+  /* 
+  DEV ONLY: if you want to re cjhck if everything is working then uncommenbt the line below this comment,
+  each time a small edit to this file will reset the data to default value 
+  only for testing, be careful with this one, it resets all data to default, including pet and stats
+  */ 
+  //resetData(); 
+  
+
   const [pet, setPet] = useState(null);
   const [appData, setAppData] = useState(null);
   const [nameDraft, setNameDraft] = useState("");
   const [walking, setWalking] = useState(false);
   const [dailySteps, setDailySteps] = useState(0);
   const [editingName, setEditingName] = useState(false);
+  const [weather, setWeather] = useState(null);
 
   const refreshData = useCallback(async () => {
     const loadedPet = await getPet();
     const loadedData = await getStoredData();
-
+    
     setPet(loadedPet);
     setAppData(loadedData);
     setDailySteps(loadedData?.stats?.dailySteps ?? 0);
     setNameDraft(loadedPet?.name ?? "");
+
+    // get the weather later after settingth the priority data
+    const weatherRes = await getWeatherData();
+    if (weatherRes && weatherRes.hourly) {
+      const currentHour = new Date().getHours();
+      setWeather({
+        temp: weatherRes.hourly.temperature_2m[currentHour],
+        tempUnit: weatherRes.hourly_units.temperature_2m, 
+        
+        wind: weatherRes.hourly.wind_speed_120m[currentHour],
+        windUnit: weatherRes.hourly_units.wind_speed_120m
+      });
+    }
   }, []);
 
   useFocusEffect(
@@ -84,7 +109,8 @@ export default function HomeScreen({ navigation }) {
         stopStepCounter();
       };
     }, [refreshData]) 
-  );
+  ); 
+
 
   if (!pet || !appData) {
     return (
@@ -154,11 +180,35 @@ export default function HomeScreen({ navigation }) {
         ]}
       >
         <View style={styles.topRow}>
-          <Text style={[styles.infoLabel, { color: theme.text }]}>Level {level}</Text>
-          <Text style={[styles.infoLabel, { color: theme.text }]}>
-            {activities} Activities
-          </Text>
-        </View>
+          <View>
+            <Text style={[styles.infoLabel, { color: theme.text }]}>Level {level}</Text>
+            <Text style={[styles.infoLabel, { color: theme.text, marginTop: 4, fontSize: 13 }]}>
+              {activities} Activities
+            </Text>
+          </View>
+          
+          {/* Weather Display */}
+          {weather && (
+            <View style={styles.weatherContainer}>
+              {/* Temperature Row */}
+              <View style={styles.weatherRow}>
+                <Text style={styles.weatherEmoji}>🌡️</Text>
+                <Text style={[styles.infoLabel, { color: theme.text }]}>
+                  {weather.temp}{weather.tempUnit}
+                </Text>
+              </View>
+
+              {/* Wind Speed Row */}
+              <View style={styles.weatherRow}>
+                <Text style={styles.weatherEmoji}>💨</Text>
+                <Text style={[styles.infoLabel, { color: theme.text }]}>
+                  {weather.wind} {weather.windUnit}
+                </Text>
+              </View>
+            </View>
+          )}
+        </View> 
+          
 
         <View style={styles.progressSection}>
           <View style={styles.progressRow}>
@@ -520,5 +570,22 @@ const styles = StyleSheet.create({
   navBtnText: {
     fontWeight: "800",
     fontSize: 15,
+  },
+
+  weatherContainer: {
+    alignItems: 'flex-start', 
+    minWidth: 100,            
+    justifyContent: 'center',
+  },
+  weatherRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  weatherEmoji: {
+    width: 25, 
+    fontSize: 16,
+    textAlign: 'center',
+    marginRight: 8,
   },
 });

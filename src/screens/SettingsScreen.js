@@ -15,8 +15,12 @@ import {
   updateDifficulty,
   updateTheme,
   updateDailyStepGoal,
+  updateTemperatureUnit,
+  updateSpeedUnit,
   DIFFICULTIES,
   THEMES,
+  TEMPRATURE_UNITS,
+  SPEED_UNITS
 } from "../backend/Settings";
 
 const THEME_STYLES = {
@@ -63,6 +67,8 @@ export default function SettingsScreen() {
     difficulty: "Beginner",
     dailyStepGoal: 5000,
     theme: "Light",
+    temperatureUnit: "Celsius",
+    speedUnit: "km/h"
   });
 
   const [usernameDraft, setUsernameDraft] = useState("");
@@ -132,6 +138,21 @@ export default function SettingsScreen() {
     setErrorMessage("");
   };
 
+  const handleSetTemperatureUnit = async (newUnit) => {
+    const success = await updateTemperatureUnit(newUnit, (savedUnit) => {
+      setSettings((prev) => ({ ...prev, temperatureUnit: savedUnit }));
+    });
+
+    if (!success) {
+      setErrorMessage("Could not update temperature unit.");
+      setStatusMessage("");
+      return;
+    }
+
+    setStatusMessage(`Temperature unit updated.`);
+    setErrorMessage("");
+  }
+
   const handleSetTheme = async (newTheme) => {
     const success = await updateTheme(newTheme, (savedTheme) => {
       setSettings((prev) => ({ ...prev, theme: savedTheme }));
@@ -159,6 +180,19 @@ export default function SettingsScreen() {
     }
 
     setStatusMessage(`Difficulty changed to ${newDifficulty}.`);
+    setErrorMessage("");
+  };
+
+  const handleSetSpeedUnit = async (newUnit) => {
+    const success = await updateSpeedUnit(newUnit, (savedUnit) => {
+      setSettings((prev) => ({ ...prev, speedUnit: savedUnit }));
+    });
+    if (!success) {
+      setErrorMessage("Could not update speed unit.");
+      setStatusMessage("");
+      return;
+    }
+    setStatusMessage(`Speed unit updated to ${newUnit}.`);
     setErrorMessage("");
   };
 
@@ -289,6 +323,52 @@ export default function SettingsScreen() {
       </View>
 
       <View style={[styles.card, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
+        <Text style={[styles.label, { color: theme.text }]}>Temperature Unit</Text>
+        <View style={styles.row}>
+          {TEMPRATURE_UNITS.map((unit) => (
+            <Pressable
+              key={unit}
+              style={[
+                styles.optionButton,
+                {
+                  backgroundColor: theme.optionBg,
+                  borderColor: theme.border,
+                },
+                settings.temperatureUnit === unit && {
+                  backgroundColor: theme.selectedBg,
+                  borderColor: theme.selectedBorder,
+                },
+              ]}
+              onPress={() => handleSetTemperatureUnit(unit)}
+            >
+              <Text style={[styles.optionButtonText, { color: theme.optionText }]}>
+                {unit}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View style={[styles.card, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
+        <Text style={[styles.label, { color: theme.text }]}>Speed Unit</Text>
+        <View style={styles.row}>
+          {SPEED_UNITS.map((unit) => (
+            <Pressable
+              key={unit}
+              style={[
+                styles.optionButton,
+                { backgroundColor: theme.optionBg, borderColor: theme.border },
+                settings.speedUnit === unit && { backgroundColor: theme.selectedBg, borderColor: theme.selectedBorder },
+              ]}
+              onPress={() => handleSetSpeedUnit(unit)}
+            >
+              <Text style={[styles.optionButtonText, { color: theme.optionText }]}>{unit}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View style={[styles.card, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
         <Text style={[styles.label, { color: theme.text }]}>Difficulty</Text>
         <View style={styles.wrapRow}>
           {DIFFICULTIES.map((level) => (
@@ -331,6 +411,12 @@ export default function SettingsScreen() {
         </Text>
         <Text style={[styles.summaryText, { color: theme.subText }]}>
           Difficulty: {settings.difficulty}
+        </Text>
+        <Text style={[styles.summaryText, { color: theme.subText }]}>
+          Temperature Unit: {settings.temperatureUnit}
+        </Text>
+        <Text style={[styles.summaryText, { color: theme.subText }]}>
+          Speed Unit: {settings.speedUnit}
         </Text>
       </View>
 

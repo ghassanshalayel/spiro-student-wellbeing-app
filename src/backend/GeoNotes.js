@@ -65,9 +65,8 @@ async function getUsersLocation() {
 
   if (coords) {
     const { latitude, longitude } = coords;
-    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
     return { latitude, longitude };
   }
 }
 
-export { getGeoNotes, deleteGeoNote, saveGeoNote };
+export { getGeoNotes, deleteGeoNote, saveGeoNote, getUsersLocation };

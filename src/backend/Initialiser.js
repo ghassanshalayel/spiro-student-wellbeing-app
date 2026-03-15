@@ -9,7 +9,8 @@ const DEFAULT_DATA = {
     age: 25,           
     difficulty: "Beginner",
     dailyStepGoal: 5000,
-    theme: "Light"
+    theme: "Light",
+    temperatureUnit: "Celsius"
   },
   stats: {
     lifetimeSteps: 0,
@@ -80,10 +81,17 @@ async function getStoredData() {
   try {
     const fileURI = fileSys.documentDirectory + 'appData.json';
     const fileContent = await fileSys.readAsStringAsync(fileURI);
+
+    if (!fileContent) {
+      console.log("Reinitialising data: No content found in appData.json.");
+      const initialData = await Innitialiser();
+      return initialData;
+    }
+
     return JSON.parse(fileContent);
   } catch (error) {
     console.error("Error getting stored data:", error);
-    return null;
+    return await Innitialiser(); // we want to reinitialise if any critical error takes place
   }
 }
 
@@ -128,6 +136,5 @@ async function setPetName(name) {
   await saveData(data);
   return data.pet;
 }
-
 // add to your export list:
 export { Innitialiser, saveData, getStoredData, resetData, getPet, setPetName };
