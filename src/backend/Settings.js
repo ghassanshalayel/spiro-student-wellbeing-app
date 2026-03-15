@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS = {
 
 const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced", "GOD MODE"];
 const THEMES = ["Light", "Dark"];
+const TEMPRATURE_UNITS = ["Celsius", "Fahrenheit"];
 
 async function loadData() {
   const data = await getStoredData();
@@ -44,6 +45,10 @@ function normaliseSettings(settings = {}) {
     theme: THEMES.includes(settings.theme)
       ? settings.theme
       : DEFAULT_SETTINGS.theme,
+
+    temperatureUnit: TEMPRATURE_UNITS.includes(settings.temperatureUnit)
+      ? settings.temperatureUnit
+      : "Celsius",
   };
 }
 
@@ -186,6 +191,27 @@ async function updateTheme(newTheme, functionToUpdateTheme) {
   return true;
 }
 
+async function updateTemperatureUnit(newUnit, functionToUpdateTemperatureUnit) {
+  if (!TEMPRATURE_UNITS.includes(newUnit)) {
+    console.log("Invalid temperature unit.");
+    return false;
+  }
+
+  const data = await loadData();
+  data.settings = normaliseSettings(data.settings);
+
+  data.settings.temperatureUnit = newUnit;
+  const success = await saveData(data);
+
+  if (!success) {
+    console.log("Failed to update temperature unit.");
+    return false;
+  }
+
+  if (functionToUpdateTemperatureUnit) functionToUpdateTemperatureUnit(newUnit);
+  return true;
+}
+
 export {
   getAppSettings,
   updateUsername,
@@ -193,6 +219,8 @@ export {
   updateDifficulty,
   updateDailyStepGoal,
   updateTheme,
+  updateTemperatureUnit,
   DIFFICULTIES,
   THEMES,
+  TEMPRATURE_UNITS,
 };

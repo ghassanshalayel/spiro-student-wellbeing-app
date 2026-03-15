@@ -6,8 +6,9 @@ import React, { useCallback,  useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { getPet, setPetName, getStoredData } from "../backend/Initialiser";
+import { getPet, setPetName, getStoredData, resetData } from "../backend/Initialiser";
 import { startStepCounter, stopStepCounter } from "../backend/Steps";
+import { getWeatherData } from "../backend/Weather";
 
 //LIGHT/DARK THEMES:
 
@@ -69,12 +70,12 @@ export default function HomeScreen({ navigation }) {
   const refreshData = useCallback(async () => {
     const loadedPet = await getPet();
     const loadedData = await getStoredData();
-
+    
     setPet(loadedPet);
     setAppData(loadedData);
     setDailySteps(loadedData?.stats?.dailySteps ?? 0);
     setNameDraft(loadedPet?.name ?? "");
-  }, []);
+  }, []); 
 
   useFocusEffect(
     useCallback(() => {

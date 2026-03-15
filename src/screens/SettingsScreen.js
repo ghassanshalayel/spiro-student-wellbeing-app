@@ -15,8 +15,10 @@ import {
   updateDifficulty,
   updateTheme,
   updateDailyStepGoal,
+  updateTemperatureUnit,
   DIFFICULTIES,
   THEMES,
+  TEMPRATURE_UNITS,
 } from "../backend/Settings";
 
 const THEME_STYLES = {
@@ -63,6 +65,7 @@ export default function SettingsScreen() {
     difficulty: "Beginner",
     dailyStepGoal: 5000,
     theme: "Light",
+    temperatureUnit: "Celsius"
   });
 
   const [usernameDraft, setUsernameDraft] = useState("");
@@ -131,6 +134,21 @@ export default function SettingsScreen() {
     setStatusMessage("Daily step goal saved.");
     setErrorMessage("");
   };
+
+  const handleSetTemperatureUnit = async (newUnit) => {
+    const success = await updateTemperatureUnit(newUnit, (savedUnit) => {
+      setSettings((prev) => ({ ...prev, temperatureUnit: savedUnit }));
+    });
+
+    if (!success) {
+      setErrorMessage("Could not update temperature unit.");
+      setStatusMessage("");
+      return;
+    }
+
+    setStatusMessage(`Temperature unit updated.`);
+    setErrorMessage("");
+  }
 
   const handleSetTheme = async (newTheme) => {
     const success = await updateTheme(newTheme, (savedTheme) => {
@@ -289,6 +307,33 @@ export default function SettingsScreen() {
       </View>
 
       <View style={[styles.card, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
+        <Text style={[styles.label, { color: theme.text }]}>Temperature Unit</Text>
+        <View style={styles.row}>
+          {TEMPRATURE_UNITS.map((unit) => (
+            <Pressable
+              key={unit}
+              style={[
+                styles.optionButton,
+                {
+                  backgroundColor: theme.optionBg,
+                  borderColor: theme.border,
+                },
+                settings.temperatureUnit === unit && {
+                  backgroundColor: theme.selectedBg,
+                  borderColor: theme.selectedBorder,
+                },
+              ]}
+              onPress={() => handleSetTemperatureUnit(unit)}
+            >
+              <Text style={[styles.optionButtonText, { color: theme.optionText }]}>
+                {unit}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View style={[styles.card, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
         <Text style={[styles.label, { color: theme.text }]}>Difficulty</Text>
         <View style={styles.wrapRow}>
           {DIFFICULTIES.map((level) => (
@@ -331,6 +376,9 @@ export default function SettingsScreen() {
         </Text>
         <Text style={[styles.summaryText, { color: theme.subText }]}>
           Difficulty: {settings.difficulty}
+        </Text>
+        <Text style={[styles.summaryText, { color: theme.subText }]}>
+          Temperature Unit: {settings.temperatureUnit}
         </Text>
       </View>
 

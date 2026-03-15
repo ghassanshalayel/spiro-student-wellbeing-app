@@ -70,4 +70,4 @@ async function getUsersLocation() {
   }
 }
 
-export { getGeoNotes, deleteGeoNote, saveGeoNote };
+export { getGeoNotes, deleteGeoNote, saveGeoNote, getUsersLocation };
