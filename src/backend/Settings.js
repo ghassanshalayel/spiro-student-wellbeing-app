@@ -11,6 +11,7 @@ const DEFAULT_SETTINGS = {
 const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced", "GOD MODE"];
 const THEMES = ["Light", "Dark"];
 const TEMPRATURE_UNITS = ["Celsius", "Fahrenheit"];
+const SPEED_UNITS = ["km/h", "mph"];
 
 async function loadData() {
   const data = await getStoredData();
@@ -49,7 +50,13 @@ function normaliseSettings(settings = {}) {
     temperatureUnit: TEMPRATURE_UNITS.includes(settings.temperatureUnit)
       ? settings.temperatureUnit
       : "Celsius",
+    
+    speedUnit: SPEED_UNITS.includes(settings.speedUnit) 
+      ? settings.speedUnit 
+      : "km/h",
   };
+
+
 }
 
 /*********** Reading *************/
@@ -212,6 +219,16 @@ async function updateTemperatureUnit(newUnit, functionToUpdateTemperatureUnit) {
   return true;
 }
 
+async function updateSpeedUnit(newUnit, callback) {
+  if (!SPEED_UNITS.includes(newUnit)) return false;
+  const data = await loadData();
+  data.settings.speedUnit = newUnit;
+  await saveData(data);
+  if (callback) callback(newUnit);
+  return true;
+}
+
+
 export {
   getAppSettings,
   updateUsername,
@@ -220,7 +237,9 @@ export {
   updateDailyStepGoal,
   updateTheme,
   updateTemperatureUnit,
+  updateSpeedUnit,
   DIFFICULTIES,
   THEMES,
   TEMPRATURE_UNITS,
+  SPEED_UNITS,
 };

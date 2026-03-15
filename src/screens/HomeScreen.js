@@ -78,15 +78,17 @@ export default function HomeScreen({ navigation }) {
       const currentHour = new Date().getHours();
       setWeather({
         temp: weatherRes.hourly.temperature_2m[currentHour],
-        unit: weatherRes.hourly_units.temperature_2m,
-        wind: weatherRes.hourly.wind_speed_120m[currentHour]
+        tempUnit: weatherRes.hourly_units.temperature_2m, 
+        
+        wind: weatherRes.hourly.wind_speed_120m[currentHour],
+        windUnit: weatherRes.hourly_units.wind_speed_120m
       });
     }
     setPet(loadedPet);
     setAppData(loadedData);
     setDailySteps(loadedData?.stats?.dailySteps ?? 0);
     setNameDraft(loadedPet?.name ?? "");
-  }, []); 
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -180,7 +182,7 @@ export default function HomeScreen({ navigation }) {
               <View style={styles.weatherRow}>
                 <Text style={styles.weatherEmoji}>🌡️</Text>
                 <Text style={[styles.infoLabel, { color: theme.text }]}>
-                  {weather.temp}{weather.unit}
+                  {weather.temp}{weather.tempUnit}
                 </Text>
               </View>
 
@@ -188,7 +190,7 @@ export default function HomeScreen({ navigation }) {
               <View style={styles.weatherRow}>
                 <Text style={styles.weatherEmoji}>💨</Text>
                 <Text style={[styles.infoLabel, { color: theme.text }]}>
-                  {weather.wind} km/h
+                  {weather.wind} {weather.windUnit}
                 </Text>
               </View>
             </View>
