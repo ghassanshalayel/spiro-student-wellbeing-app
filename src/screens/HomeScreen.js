@@ -169,6 +169,7 @@ export default function HomeScreen({ navigation }) {
     <ScrollView
       style={[styles.page, { backgroundColor: theme.pageBg }]}
       contentContainerStyle={styles.pageContent}
+      scrollEnabled={false}
       showsVerticalScrollIndicator={false}
     >
       <Text style={[styles.title, { color: theme.text }]}>Spiro</Text>
