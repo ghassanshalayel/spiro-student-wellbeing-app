@@ -8,7 +8,7 @@ import { getStoredData } from '../backend/Initialiser';
 import { saveGeoNote, deleteGeoNote } from '../backend/GeoNotes'; 
 import { deletePhoto } from '../backend/Gallery'; 
 
-export default function MapScreen() {
+export default function MapScreen({navigation}) {
   const mapRef = useRef(null);
   const [markers, setMarkers] = useState([]);
   
@@ -170,6 +170,13 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
+        <Pressable
+        onPress={() => navigation.goBack()}
+        style={styles.backBtn}
+      >
+        <Text style={styles.backBtnText}>←</Text>
+      </Pressable>
+
       <MapView 
         ref={mapRef}
         style={styles.map}
@@ -364,4 +371,19 @@ const styles = StyleSheet.create({
   cancelBtnText: { color: '#475569', fontWeight: 'bold', fontSize: 16 },
   saveBtn: { backgroundColor: '#3567B7', marginLeft: 10 },
   saveBtnText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
+
+  backBtn: {
+    position: 'absolute',
+    top: 48,
+    left: 16,
+    zIndex: 10,
+    backgroundColor: 'white', 
+    borderRadius: 12,
+    paddingVertical: 8, 
+    paddingHorizontal: 14,
+    borderWidth: 2, 
+    borderColor: '#CBD5E1',
+  },
+
+  backBtnText: { fontSize: 15, fontWeight: '700', color: '#1E293B' },
 });
