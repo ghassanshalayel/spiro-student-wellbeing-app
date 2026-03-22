@@ -15,10 +15,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Pet" component={HomeScreen} />
-        <Stack.Screen name="Map" component={MapScreen} />
-        <Stack.Screen name="Gallery" component={GalleryScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="Pet" component={HomeScreen} options={{headerShown: false }} />
+        <Stack.Screen name="Map" component={MapScreen} options={{headerShown: false }} />
+        <Stack.Screen name="Gallery" component={GalleryScreen} options={{headerShown: false }}/>
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
