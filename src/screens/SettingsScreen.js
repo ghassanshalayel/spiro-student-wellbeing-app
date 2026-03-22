@@ -60,7 +60,7 @@ const THEME_STYLES = {
   },
 };
 
-export default function SettingsScreen() {
+export default function SettingsScreen({navigation}) {
   const [settings, setSettings] = useState({
     username: "User",
     age: 0,
@@ -205,6 +205,13 @@ export default function SettingsScreen() {
       contentContainerStyle={[styles.container, { backgroundColor: theme.pageBg }]}
       showsVerticalScrollIndicator={false}
     >
+      <Pressable
+        onPress={() => navigation.goBack()}
+        style={[styles.backBtn, { backgroundColor: theme.cardBg, borderColor: theme.border }]}
+      >
+        <Text style={[styles.backBtnText, { color: theme.text }]}>← </Text>
+      </Pressable>
+
       <Text style={[styles.title, { color: theme.text }]}>Settings</Text>
 
       <View style={[styles.card, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
@@ -539,4 +546,17 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginTop: 4,
   },
+
+  backBtn: {
+    alignSelf: 'flex-start',
+    borderWidth: 2,
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginBottom: 12,
+    marginTop: 40,
+    justifyContent: 'center'
+  },
+
+  backBtnText: { fontSize: 15, fontWeight: '700' },
 });
