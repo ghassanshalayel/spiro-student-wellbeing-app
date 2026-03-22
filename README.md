@@ -36,7 +36,6 @@ Social Validation (Connect/Give/Learn): Through "Geo-Notes," the app reduces the
 
 
 ## File Structure
-```bash
 Spiro/
 ├── assets/                     # Images and icons 
 ├── node_modules/               # Installed libraries (Navigation, Maps, etc.)
@@ -45,21 +44,22 @@ Spiro/
 │   │   ├── Initialiser.js      # JSON load/save logic
 │   │   ├── Settings.js         # User Settings logic
 │   │   ├── Steps.js            # Step counter functions
-│   │   ├── Geolocation.js      # Location logic
+│   │   ├── GeoNotes.js         # Map Markers & Location logic
+│   │   ├── Routes.js           # NEW: Breadcrumb tracking logic
 │   │   ├── Pet.js              # Pet state logic
-│   │   └── Gallery.js          # Gallery data logic
+│   │   ├── Gallery.js          # Gallery data logic
+│   │   └── Weather.js          # Open-Meteo API logic
 │   ├── screens/                # The UI components for each page
-│   │   ├── LandingPage.js      # Main hub with 3 buttons
-│   │   ├── MapScreen.js        # View with MapView and Markers
-│   │   ├── GalleryScreen.js    # Placeholder for Nature/Geo-Notes
-│   │   └── SettingsScreen.js   # UI for user preferences
-│   └── example.json            # data example
-├── App.js                      # Root component with NavigationContainer
-├── app.json                    # Expo configuration
-├── package.json                # Project dependencies and scripts
-├── index.js                    # Entry point for the app
-└── README.md                   # Project documentation
-```
+│       ├── LandingPage.js      # Main hub with 3 buttons
+│       ├── MapScreen.js        # View with MapView and Markers
+│       ├── GalleryScreen.js    # Placeholder for Nature/Geo-Notes
+│       └── SettingsScreen.js   # UI for user preferences
+│                           
+├── example.json                #  folder for schema examples 
+├── App.js                      # Root Stack Navigator (MAD 7)
+├── app.json                    # Expo Config (Permissions for GPS/Pedometer)
+├── package.json                # Project dependencies
+└── README.md                   # Documentation for GitLab
 ## How we store the Local Data?
 
 we store the data in JSON format
