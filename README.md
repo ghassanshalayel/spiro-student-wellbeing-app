@@ -34,7 +34,7 @@ Environmental Grounding (Take Notice): The app uses location-based prompts to fo
 Social Validation (Connect/Give/Learn): Through "Geo-Notes," the app reduces the isolation of exam season. Johnny can find digital notes left by other stressed people on the same trail, realizing he isn't alone in his struggle. This creates a "passive community" that provides support without the social exhaustion of a direct conversation.
 
 
-
+```bash
 ## File Structure
 Spiro/
 ├── assets/                     # Images and icons 
@@ -61,7 +61,7 @@ Spiro/
 ├── package.json                # Project dependencies
 └── README.md                   # Documentation for GitLab
 ## How we store the Local Data?
-
+```
 we store the data in JSON format
 
 in future, new values can be added or be removed
