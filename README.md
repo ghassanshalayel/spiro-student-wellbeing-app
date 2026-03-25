@@ -27,7 +27,7 @@ a walk or outdoor activity into a meaningful mission.
 Spiro will keep users like Johnny motivated by serving as a pet whos mood and level will be determined by how active the user is.
 When Spiro gets sad or lazy or lonely, the app will push a notification to Johnny telling him to take a walk. This walk will be mindful also. The resulting walk isn't just about hitting a step count, either. Spiro guides Johnny through mindful "Take Notice" moments, forcing him to disengage from his work and centre himself in his surroundings. Ultimately, the app tricks Johnny into taking the mental reset he desperately needs, using his own empathy as the primary motivator to de-stress and recharge
 
-Gamified Stress Reduction (Be Active): By linking Spiro’s growth and happiness to a pedometer, Spiro turns a mundane walk into a level-up opportunity. For a CS student, this mimics the satisfying progression of a game or a successful code deployment which will provide a hit of dopamine also.
+Gamified Stress Reduction (Be Active): By linking their pet's growth and happiness to a pedometer, Spiro turns a mundane walk into a level-up opportunity. For a CS student, this mimics the satisfying progression of a game or a successful code deployment which will provide a hit of dopamine also.
 
 Environmental Grounding (Take Notice): The app uses location-based prompts to force micro-mindfulness. As Johnny walks, Buddy might point out a specific landmark or a change in the weather, dragging Johnny back into the physical world.
 
@@ -38,14 +38,13 @@ Social Validation (Connect/Give/Learn): Through "Geo-Notes," the app reduces the
 ## File Structure
 Spiro/
 ├── assets/                     # Images and icons 
-├── node_modules/               # Installed libraries (Navigation, Maps, etc.)
+├── node_modules/               # Installed libraries 
 ├── src/
 │   ├── backend/                # Logic files already created
 │   │   ├── Initialiser.js      # JSON load/save logic
 │   │   ├── Settings.js         # User Settings logic
 │   │   ├── Steps.js            # Step counter functions
 │   │   ├── GeoNotes.js         # Map Markers & Location logic
-│   │   ├── Routes.js           # NEW: Breadcrumb tracking logic
 │   │   ├── Pet.js              # Pet state logic
 │   │   ├── Gallery.js          # Gallery data logic
 │   │   └── Weather.js          # Open-Meteo API logic
