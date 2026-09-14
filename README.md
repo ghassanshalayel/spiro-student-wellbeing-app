@@ -65,5 +65,14 @@ we store the data in JSON format
 
 in future, new values can be added or be removed
 
+## Contributors
+
+Spiro was developed collaboratively as a CS317 group project at the University of Strathclyde.
+
+- Ghassan Shalayel
+- Natalie McGill
+- Mohammad Rayyan Adhoni
+
+  
 ### The Schema
 [Click Me to see the Schema](src\example.json)
