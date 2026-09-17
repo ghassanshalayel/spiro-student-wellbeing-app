@@ -1,78 +1,83 @@
-# Spiro: Student Destresser App
-### CS317 Group Project 
+# Spiro – Student Wellbeing App
 
-## Project Overview
-Spiro is a mobile health application designed to help students like "Johnny" manage exam stress. The app gamifies physical activity by linking real-world steps to the growth and happiness of a virtual pet. It is built on the 5 Ways to Wellbeing:
+### CS317 Group Project | University of Strathclyde
 
-***Be Active***: Pedometer-based step tracking.
+## Overview
 
-***Take Notice***: Location-based mindfulness prompts.
+Spiro is a mobile wellbeing application designed to encourage students to take meaningful breaks from prolonged periods of study and become more physically active.
 
-***Connect/Give/Learn***: Community-driven "Geo-Notes" and nature challenges.
+The app combines step tracking, a virtual pet, location-based activities and mindfulness prompts to make taking a break feel rewarding rather than disruptive.
 
-## Our Persona: Johnny (The Stressed Student)
-***Status***: 3rd-year CS student.  He is going through the third year wall right now where the theory of what he is learning is becoming
- like a mountain. He is juggling a heavy course load and the constant pressure of technical interview preperations. Between trying to keep his test scores high and building a portfolio to land a summer internship, Johnny has neglected his physical self.
+The concept was developed around the **5 Ways to Wellbeing**, with features designed to encourage physical activity, awareness of surroundings and social interaction.
 
-***Problem***: Due to his entire world being contained on his computer screen, Johnny has fallen into a cycle of physical neglect. 
-During exam season, he can go 72 hours without leaving his home as he is always on the grind. The lack of physical activity has
-resulted in erratic sleep patterns, painful joints and muscles and a brain fog which actually results in his studying being less effective. He knows he should exercise, but his todo list is too big right now and the gym seems like an indulgence that he cant go through. His stress is caused largely in part due to his physical stagnation.
+## Key Features
 
-***Goal***: Johnny needs a break, he needs to step away from his desk. He has tried different study methods like setting alarms 
-and the pomodoro technique but these just feel like distractions to him. He needs a way to be able to leave what he is working on 
-and not feel a crushing guilt of being "unproductive". He needs motivation, something that will keep him accountable that can turn
-a walk or outdoor activity into a meaningful mission.
+### Virtual Pet & Step Tracking
+Spiro links the user's physical activity to the state and progression of a virtual pet. Step data provides an incentive to get away from the desk, go outside and remain active.
 
-***App Benefit***: Introducing Spiro. Spiro will serve as the emotional bridge and motivation that Johnny's brain cannot ignore.
-Spiro will keep users like Johnny motivated by serving as a pet whos mood and level will be determined by how active the user is.
-When Spiro gets sad or lazy or lonely, the app will push a notification to Johnny telling him to take a walk. This walk will be mindful also. The resulting walk isn't just about hitting a step count, either. Spiro guides Johnny through mindful "Take Notice" moments, forcing him to disengage from his work and centre himself in his surroundings. Ultimately, the app tricks Johnny into taking the mental reset he desperately needs, using his own empathy as the primary motivator to de-stress and recharge
+### Location-Based Mindfulness
+Location-aware prompts encourage users to pay attention to their surroundings while walking, supporting the "Take Notice" aspect of the 5 Ways to Wellbeing.
 
-Gamified Stress Reduction (Be Active): By linking their pet's growth and happiness to a pedometer, Spiro turns a mundane walk into a level-up opportunity. For a CS student, this mimics the satisfying progression of a game or a successful code deployment which will provide a hit of dopamine also.
+### Geo-Notes
+Users can interact with location-based notes, creating a lightweight community feature that allows students to discover messages connected to places around them.
 
-Environmental Grounding (Take Notice): The app uses location-based prompts to force micro-mindfulness. As Johnny walks, Buddy might point out a specific landmark or a change in the weather, dragging Johnny back into the physical world.
+### Weather Integration
+The application integrates weather data using the Open-Meteo API to support context-aware features.
 
-Social Validation (Connect/Give/Learn): Through "Geo-Notes," the app reduces the isolation of exam season. Johnny can find digital notes left by other stressed people on the same trail, realizing he isn't alone in his struggle. This creates a "passive community" that provides support without the social exhaustion of a direct conversation.
+### Local Data Storage
+User and application data is stored locally using JSON, allowing settings and other application state to persist between sessions.
 
+## Tech Stack
 
-```bash
-## File Structure
+- JavaScript
+- React Native
+- Expo
+- Git
+- Open-Meteo API
+- JSON
+
+## Project Structure
+
+```text
 Spiro/
-├── assets/                     # Images and icons 
-├── node_modules/               # Installed libraries 
+├── assets/                     # Images and icons
 ├── src/
-│   ├── backend/                # Logic files already created
+│   ├── backend/
 │   │   ├── Initialiser.js      # JSON load/save logic
-│   │   ├── Settings.js         # User Settings logic
-│   │   ├── Steps.js            # Step counter functions
-│   │   ├── GeoNotes.js         # Map Markers & Location logic
-│   │   ├── Pet.js              # Pet state logic
+│   │   ├── Settings.js         # User settings logic
+│   │   ├── Steps.js            # Step counter functionality
+│   │   ├── GeoNotes.js         # Map markers and location logic
+│   │   ├── Pet.js              # Virtual pet state logic
 │   │   ├── Gallery.js          # Gallery data logic
-│   │   └── Weather.js          # Open-Meteo API logic
-│   ├── screens/                # The UI components for each page
-│       ├── LandingPage.js      # Main hub with 3 buttons
-│       ├── MapScreen.js        # View with MapView and Markers
-│       ├── GalleryScreen.js    # Placeholder for Nature/Geo-Notes
-│       └── SettingsScreen.js   # UI for user preferences
-│                           
-├── example.json                #  folder for schema examples 
-├── App.js                      # Root Stack Navigator (MAD 7)
-├── app.json                    # Expo Config (Permissions for GPS/Pedometer)
+│   │   └── Weather.js          # Open-Meteo API integration
+│   │
+│   └── screens/
+│       ├── LandingPage.js      # Main application hub
+│       ├── MapScreen.js        # Map and location markers
+│       ├── GalleryScreen.js    # Nature and Geo-Notes interface
+│       └── SettingsScreen.js   # User preferences
+│
+├── example.json                # Example data schema
+├── App.js                      # Root application/navigation
+├── app.json                    # Expo configuration
 ├── package.json                # Project dependencies
-└── README.md                   # Documentation for GitLab
-## How we store the Local Data?
+└── README.md                   # Project documentation
 ```
-we store the data in JSON format
 
-in future, new values can be added or be removed
+## Design Approach
+
+Spiro was designed around a student persona experiencing high levels of academic workload and spending extended periods at a computer.
+
+Rather than treating breaks as interruptions to productivity, the application aims to give users a reason to step away from their desk. Progression of the virtual pet provides an incentive for physical activity, while location-based prompts encourage users to engage with their surroundings.
+
+This approach informed the project's combination of gamification, physical activity and mindfulness features.
 
 ## Contributors
 
-Spiro was developed collaboratively as a CS317 group project at the University of Strathclyde.
+Spiro was developed collaboratively as a **CS317 group project at the University of Strathclyde**.
 
 - Ghassan Shalayel
 - Natalie McGill
 - Mohammad Rayyan Adhoni
-
-  
-### The Schema
-[Click Me to see the Schema](src\example.json)
+- Callum Penney
+- Erin Singleton
